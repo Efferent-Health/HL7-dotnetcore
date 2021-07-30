@@ -40,7 +40,7 @@ message.AddSegmentMSH(sendingApplication, sendingFacility,
 
 ### Message extraction
 
-If the HL7 message is coming from a MLLP connection (see [the official documentation]( www.hl7.org/documentcenter/public/wg/inm/mllp_transport_specification.PDF)), the message needs to be cleared from the MLLP prefixes and suffixes. Also, consider there can be more than one message in a single MLLP frame.
+If the HL7 message is coming from a MLLP connection (see [the official documentation](https://www.hl7.org/documentcenter/public/wg/inm/mllp_transport_specification.PDF)), the message needs to be cleared from the MLLP prefixes and suffixes. Also, consider there can be more than one message in a single MLLP frame.
 
 For this purpose, there is an `ExtractMessages()` method, to be used as follows:
 

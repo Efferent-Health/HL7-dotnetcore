@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Copyright>(c) Efferent Health, LLC</Copyright>
-    <VersionPrefix>2.24.0</VersionPrefix>
+    <VersionPrefix>2.25.0</VersionPrefix>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>HL7Test</AssemblyName>
     <PackageId>HL7Test</PackageId>

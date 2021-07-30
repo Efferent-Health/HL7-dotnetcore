@@ -142,6 +142,13 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
+        public void NotEncodingTest()
+        {
+            var enc = new HL7Encoding().Encode("<1");
+            Assert.AreEqual(enc, "<1");
+        }
+
+        [TestMethod]
         public void EncodingForOutputTest()
         {
             const string oruUrl = "domain.com/resource.html?Action=1&ID=2";  // Text with special character (&)
@@ -702,6 +709,86 @@ OBX|1|TX|SCADOCTOR||^||||||F";
             {
                 Assert.Fail("Unexpected exception", ex);
             }
+        }
+
+        [TestMethod]
+        public void SetValueSingleSegment()
+        {
+            var strValueFormat = "PID.2.1";
+            var unchangedValuePath = "PID.3.1";
+            var newPatientId = "1234567";
+            var message = new Message(HL7_ADT);
+            message.ParseMessage();
+
+            message.SetValue(strValueFormat, newPatientId);
+            
+            Assert.AreEqual(newPatientId, message.GetValue(strValueFormat));
+            Assert.AreEqual("454721", message.GetValue(unchangedValuePath));
+        }
+
+        [TestMethod]
+        public void SetValueRepeatingSegments()
+        {
+            var strValueFormat = "NK1.2.1";
+            var unchangedValuePath = "NK1.2.2";
+            var newFamilyName = "SCHMOE";
+            var message = new Message(HL7_ADT);
+            message.ParseMessage();
+
+            message.SetValue(strValueFormat, newFamilyName);
+
+            var firstNK1ChangedValue = message.GetValue(strValueFormat);
+            var firstNK1UnchangedValue = message.GetValue(unchangedValuePath);
+            Assert.IsTrue(message.RemoveSegment("NK1", 0));
+            var secondNk1ChangedValue = message.GetValue(strValueFormat);
+            var secondNk1UnchangedValue = message.GetValue(unchangedValuePath);
+
+            Assert.AreEqual(newFamilyName, firstNK1ChangedValue);
+            Assert.AreEqual(newFamilyName, secondNk1ChangedValue);
+            Assert.AreEqual("MARIE", firstNK1UnchangedValue);
+            Assert.AreEqual("JHON", secondNk1UnchangedValue);
+        }
+
+        [TestMethod]
+        public void SetValueUnavailableComponents()
+        {
+            var sampleMessage = @"MSH|^~\&|SYSTEM1|ABC|SYSTEM2||201803262027||DFT^P03|20180326202737608457|P|2.3|||"
+                                    +"\nPID|1|0002381795|0002381795||Supermann^Peter^^^Herr||19990101|M|||";
+            var testValue = "test";
+            var message = new Message(sampleMessage);
+            message.ParseMessage();
+
+            var invalidRequest = Assert.ThrowsException<HL7Exception>(() => message.SetValue("", testValue));
+            Assert.IsTrue(invalidRequest.Message.Contains("Request format"), "Should have thrown exception because of invalid request format");
+            
+            var unavailableSegment = Assert.ThrowsException<HL7Exception>(() => message.SetValue("OBX.1", testValue));
+            Assert.IsTrue(unavailableSegment.Message.Contains("Segment name"), "Should have thrown exception because of unavailable Segment");
+            
+            var segmentLevel = Assert.ThrowsException<HL7Exception>(() => message.SetValue("PID.30", testValue));
+            Assert.IsTrue(segmentLevel.Message.Contains("Field not available"), "Should have thrown exception because of unavailable Field");
+            
+            var componentLevel = Assert.ThrowsException<HL7Exception>(() => message.SetValue("PID.3.7", testValue));
+            Assert.IsTrue(componentLevel.Message.Contains("Component not available"), "Should have thrown exception because of unavailable Component");
+            
+            var subComponentLevel = Assert.ThrowsException<HL7Exception>(() => message.SetValue("PID.3.1.2", testValue));
+            Assert.IsTrue(subComponentLevel.Message.Contains("SubComponent not available"), "Should have thrown exception because of unavailable SubComponent");
+        }
+
+        [TestMethod]
+        public void SetValueAvailableComponents()
+        {
+            var testValue = "test";
+            var message = new Message(HL7_ADT);
+            message.ParseMessage();
+
+            Assert.IsTrue(message.SetValue("PID.1", testValue), "Should have successfully set value of Field");
+            Assert.AreEqual(testValue, message.GetValue("PID.1"));
+            
+            Assert.IsTrue(message.SetValue("PID.2.2", testValue), "Should have successfully set value of Component");
+            Assert.AreEqual(testValue, message.GetValue("PID.2.2"));
+            
+            Assert.IsTrue(message.SetValue("PID.2.4.1", testValue), "Should have successfully set value of SubComponent");
+            Assert.AreEqual(testValue, message.GetValue("PID.2.4.1"));
         }
     }
 }

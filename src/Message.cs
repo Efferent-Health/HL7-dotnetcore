@@ -302,7 +302,7 @@ namespace HL7.Dotnetcore
         }
 
         /// <summary>
-        /// Sets the Value of specific Field/Component/SubCpomponent, throws error if field/component index is not valid
+        /// Sets the Value of specific Field/Component/SubComponent in matching Segments, throws error if field/component index is not valid
         /// </summary>
         /// <param name="strValueFormat">Field/Component position in format SEGMENTNAME.FieldIndex.ComponentIndex.SubComponentIndex example PID.5.2</param>
         /// <param name="strValue">Value for the specified field/component</param>
@@ -323,56 +323,58 @@ namespace HL7.Dotnetcore
 
                 if (SegmentList.ContainsKey(segmentName))
                 {
-                    var segment = SegmentList[segmentName].First();
+                    foreach (var segment in SegmentList[segmentName])
+                    {
+                        if (comCount == 4)
+                        {
+                            Int32.TryParse(allComponents[2], out componentIndex);
+                            Int32.TryParse(allComponents[3], out subComponentIndex);
 
-                    if (comCount == 4)
-                    {
-                        Int32.TryParse(allComponents[2], out componentIndex);
-                        Int32.TryParse(allComponents[3], out subComponentIndex);
+                            try
+                            {
+                                var field = this.getField(segment, allComponents[1]);
+                                field.ComponentList[componentIndex - 1].SubComponentList[subComponentIndex - 1].Value = strValue;
+                                isSet = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message);
+                            }
+                        }
+                        else if (comCount == 3)
+                        {
+                            Int32.TryParse(allComponents[2], out componentIndex);
 
-                        try
-                        {
-                            var field = this.getField(segment, allComponents[1]);
-                            field.ComponentList[componentIndex - 1].SubComponentList[subComponentIndex - 1].Value = strValue;
-                            isSet = true;
+                            try
+                            {
+                                var field = this.getField(segment, allComponents[1]);
+                                field.ComponentList[componentIndex - 1].Value = strValue;
+                                isSet = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message);
+                            }
                         }
-                        catch (Exception ex)
+                        else if (comCount == 2)
                         {
-                            throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message);
+                            try
+                            {
+                                var field = this.getField(segment, allComponents[1]);
+                                field.Value = strValue;
+                                isSet = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
+                            }
+                        }
+                        else
+                        {
+                            throw new HL7Exception("Cannot overwrite a segment value");
                         }
                     }
-                    else if (comCount == 3)
-                    {
-                        Int32.TryParse(allComponents[2], out componentIndex);
 
-                        try
-                        {
-                            var field = this.getField(segment, allComponents[1]);
-                            field.ComponentList[componentIndex - 1].Value = strValue;
-                            isSet = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message);
-                        }
-                    }
-                    else if (comCount == 2)
-                    {
-                        try
-                        {
-                            var field = this.getField(segment, allComponents[1]);
-                            field.Value = strValue;
-                            isSet = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        throw new HL7Exception("Cannot overwrite a segment value");
-                    }
                 }
                 else
                     throw new HL7Exception("Segment name not available");
@@ -730,7 +732,7 @@ namespace HL7.Dotnetcore
                     // Check if message starts with header segment
                     if (!HL7Message.StartsWith("MSH"))
                     {
-                        throw new HL7Exception("MSH segment not found at the beggining of the message", HL7Exception.BAD_MESSAGE);
+                        throw new HL7Exception("MSH segment not found at the beginning of the message", HL7Exception.BAD_MESSAGE);
                     }
 
                     this.Encoding.EvaluateSegmentDelimiter(this.HL7Message);
