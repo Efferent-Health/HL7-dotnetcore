@@ -120,5 +120,10 @@ namespace HL7.Dotnetcore
         {
             return this.FieldList;
         }
+
+        public short GetSequenceNo()
+        {
+            return this.SequenceNo;
+        }
     }
 }
