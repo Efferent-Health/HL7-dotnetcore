@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -789,6 +790,27 @@ OBX|1|TX|SCADOCTOR||^||||||F";
             
             Assert.IsTrue(message.SetValue("PID.2.4.1", testValue), "Should have successfully set value of SubComponent");
             Assert.AreEqual(testValue, message.GetValue("PID.2.4.1"));
+        }
+
+        [TestMethod]
+        public void MessageIsComponentized()
+        {
+            string sampleMessage = this.HL7_ADT;
+            var message = new Message(sampleMessage);
+            message.ParseMessage();
+
+            Assert.IsTrue(message.IsComponentized("PID.5"));
+        }
+
+        [TestMethod]
+        public void FieldHasRepetitions()
+        {
+            string sampleMessage = this.HL7_ADT;
+            var message = new Message(sampleMessage);
+            message.ParseMessage();
+            Console.WriteLine(message.Segments("PID")[0].Fields(18).Value);
+            Assert.IsFalse(message.HasRepetitions("PID.3"));
+            //Assert.IsTrue(message.HasRepetitions("PID.18")); // Possible bug in the upstream library
         }
     }
 }
