@@ -56,15 +56,20 @@ namespace HL7.Dotnetcore
         /// <summary>
         /// Parse the HL7 message in text format, throws HL7Exception if error occurs
         /// </summary>
+        /// <param name="bypassValidation">To parse the message without any validation</param>
         /// <returns>boolean</returns>
-        public bool ParseMessage()
+        public bool ParseMessage(bool bypassValidation = false)
         {
             bool isValid = false;
             bool isParsed = false;
 
             try
             {
-                isValid = this.validateMessage();
+                if (!bypassValidation)
+                {
+                    isValid = this.validateMessage();
+                }
+                else { isValid = true; }
             }
             catch (HL7Exception ex)
             {
@@ -297,7 +302,7 @@ namespace HL7.Dotnetcore
         }
 
         /// <summary>
-        /// Sets the Value of specific Field/Component/SubCpomponent, throws error if field/component index is not valid
+        /// Sets the Value of specific Field/Component/SubComponent in matching Segments, throws error if field/component index is not valid
         /// </summary>
         /// <param name="strValueFormat">Field/Component position in format SEGMENTNAME.FieldIndex.ComponentIndex.SubComponentIndex example PID.5.2</param>
         /// <param name="strValue">Value for the specified field/component</param>
@@ -318,56 +323,58 @@ namespace HL7.Dotnetcore
 
                 if (SegmentList.ContainsKey(segmentName))
                 {
-                    var segment = SegmentList[segmentName].First();
+                    foreach (var segment in SegmentList[segmentName])
+                    {
+                        if (comCount == 4)
+                        {
+                            Int32.TryParse(allComponents[2], out componentIndex);
+                            Int32.TryParse(allComponents[3], out subComponentIndex);
 
-                    if (comCount == 4)
-                    {
-                        Int32.TryParse(allComponents[2], out componentIndex);
-                        Int32.TryParse(allComponents[3], out subComponentIndex);
+                            try
+                            {
+                                var field = this.getField(segment, allComponents[1]);
+                                field.ComponentList[componentIndex - 1].SubComponentList[subComponentIndex - 1].Value = strValue;
+                                isSet = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message);
+                            }
+                        }
+                        else if (comCount == 3)
+                        {
+                            Int32.TryParse(allComponents[2], out componentIndex);
 
-                        try
-                        {
-                            var field = this.getField(segment, allComponents[1]);
-                            field.ComponentList[componentIndex - 1].SubComponentList[subComponentIndex - 1].Value = strValue;
-                            isSet = true;
+                            try
+                            {
+                                var field = this.getField(segment, allComponents[1]);
+                                field.ComponentList[componentIndex - 1].Value = strValue;
+                                isSet = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message);
+                            }
                         }
-                        catch (Exception ex)
+                        else if (comCount == 2)
                         {
-                            throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message);
+                            try
+                            {
+                                var field = this.getField(segment, allComponents[1]);
+                                field.Value = strValue;
+                                isSet = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
+                            }
+                        }
+                        else
+                        {
+                            throw new HL7Exception("Cannot overwrite a segment value");
                         }
                     }
-                    else if (comCount == 3)
-                    {
-                        Int32.TryParse(allComponents[2], out componentIndex);
 
-                        try
-                        {
-                            var field = this.getField(segment, allComponents[1]);
-                            field.ComponentList[componentIndex - 1].Value = strValue;
-                            isSet = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message);
-                        }
-                    }
-                    else if (comCount == 2)
-                    {
-                        try
-                        {
-                            var field = this.getField(segment, allComponents[1]);
-                            field.Value = strValue;
-                            isSet = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        throw new HL7Exception("Cannot overwrite a segment value");
-                    }
                 }
                 else
                     throw new HL7Exception("Segment name not available");
@@ -503,10 +510,11 @@ namespace HL7.Dotnetcore
         /// <summary>
         /// Builds the acknowledgement message for this message
         /// </summary>
+        /// <param name="bypassValidation">Bypasses validation of the resulting ACK message</param>
         /// <returns>An ACK message if success, otherwise null</returns>
-        public Message GetACK()
+        public Message GetACK(bool bypassValidation = false)
         {
-            return this.createAckMessage("AA", false, null);
+            return this.createAckMessage("AA", false, null, bypassValidation);
         }
 
         /// <summary>
@@ -514,10 +522,11 @@ namespace HL7.Dotnetcore
         /// </summary>
         /// <param name="code">ack code like AR, AE</param>
         /// <param name="errMsg">Error message to be sent with NACK</param>
+        /// <param name="bypassValidation">Bypasses validation of the resulting NACK message</param>
         /// <returns>A NACK message if success, otherwise null</returns>
-        public Message GetNACK(string code, string errMsg)
+        public Message GetNACK(string code, string errMsg, bool bypassValidation = false)
         {
-            return this.createAckMessage(code, true, errMsg);
+            return this.createAckMessage(code, true, errMsg, bypassValidation);
         }
 
         /// <summary>
@@ -640,8 +649,9 @@ namespace HL7.Dotnetcore
         /// <param name="code">ack code like AA, AR, AE</param>
         /// <param name="isNack">true for generating a NACK message, otherwise false</param>
         /// <param name="errMsg">error message to be sent with NACK</param>
+        /// <param name="bypassValidation">Bypasses validation of the resulting ACK/NACK message</param>
         /// <returns>An ACK or NACK message if success, otherwise null</returns>
-        private Message createAckMessage(string code, bool isNack, string errMsg)
+        private Message createAckMessage(string code, bool isNack, string errMsg, bool bypassValidation)
         {
             var response = new StringBuilder();
 
@@ -666,7 +676,7 @@ namespace HL7.Dotnetcore
             try 
             {
                 var message = new Message(response.ToString());
-                message.ParseMessage();
+                message.ParseMessage(bypassValidation);
                 return message;
             }
             catch 
@@ -722,7 +732,7 @@ namespace HL7.Dotnetcore
                     // Check if message starts with header segment
                     if (!HL7Message.StartsWith("MSH"))
                     {
-                        throw new HL7Exception("MSH segment not found at the beggining of the message", HL7Exception.BAD_MESSAGE);
+                        throw new HL7Exception("MSH segment not found at the beginning of the message", HL7Exception.BAD_MESSAGE);
                     }
 
                     this.Encoding.EvaluateSegmentDelimiter(this.HL7Message);

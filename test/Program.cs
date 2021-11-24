@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -98,7 +99,7 @@ namespace HL7.Dotnetcore.Test
         public void AddComponentsTest()
         {
             var encoding = new HL7Encoding();
-            
+
             // Create a Segment with name ZIB
             Segment newSeg = new Segment("ZIB", encoding);
 
@@ -142,10 +143,17 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
+        public void NotEncodingTest()
+        {
+            var enc = new HL7Encoding().Encode("<1");
+            Assert.AreEqual(enc, "<1");
+        }
+
+        [TestMethod]
         public void EncodingForOutputTest()
         {
             const string oruUrl = "domain.com/resource.html?Action=1&ID=2";  // Text with special character (&)
-            
+
             var obx = new Segment("OBX", new HL7Encoding());
             obx.AddNewField("1");
             obx.AddNewField("RP");
@@ -153,7 +161,7 @@ namespace HL7.Dotnetcore.Test
             obx.AddNewField("1");
             obx.AddNewField(obx.Encoding.Encode(oruUrl));  // Encoded field
             obx.AddNewField("F", 11);
-            obx.AddNewField(MessageHelper.LongDateWithFractionOfSecond(DateTime.Now), 14);            
+            obx.AddNewField(MessageHelper.LongDateWithFractionOfSecond(DateTime.Now), 14);
 
             var oru = new Message();
             oru.AddNewSegment(obx);
@@ -162,7 +170,7 @@ namespace HL7.Dotnetcore.Test
 
             Assert.IsFalse(str.Contains("&"));  // Should have \T\ instead
         }
-        
+
         [TestMethod]
         public void AddFieldTest()
         {
@@ -226,7 +234,7 @@ namespace HL7.Dotnetcore.Test
         public void AddSegmentMSHTest()
         {
             var message = new Message();
-            message.AddSegmentMSH("test", "sendingFacility", "test","test", "test", "ADR^A19", "test", "D", "2.5");
+            message.AddSegmentMSH("test", "sendingFacility", "test", "test", "test", "ADR^A19", "test", "D", "2.5");
         }
 
         [TestMethod]
@@ -304,7 +312,7 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
-        public void MessageWithNullsIsReversable() 
+        public void MessageWithNullsIsReversable()
         {
             const string sampleMessage = "MSH|^~\\&|SA|SF|RA|RF|20110613083617||ADT^A04|123|P|2.7||||\r\nEVN|A04|20110613083617||\"\"\r\n";
             var message = new Message(sampleMessage);
@@ -314,7 +322,7 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
-        public void MessageWithSegmentNameOnly() 
+        public void MessageWithSegmentNameOnly()
         {
             const string sampleMessage = "MSH|^~\\&|SA|SF|RA|RF|20110613083617||ADT^A04|123|P|2.7||||\r\nPID\r\nEVN|A04|20110613083617||\"\"\r\n";
             var message = new Message(sampleMessage);
@@ -324,7 +332,7 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
-        public void MessageWithTabsIsReversable() 
+        public void MessageWithTabsIsReversable()
         {
             const string sampleMessage = "MSH|^~\\&|Sending\tApplication|Sending\tFacility|RA|RF|20110613083617||ADT^A04|123|P|2.7||||\r\nEVN|A04|20110613083617\r\n";
             var message = new Message(sampleMessage);
@@ -334,7 +342,7 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
-        public void RemoveSegment() 
+        public void RemoveSegment()
         {
             var message = new Message(this.HL7_ADT);
             message.ParseMessage();
@@ -391,8 +399,8 @@ namespace HL7.Dotnetcore.Test
             TimeSpan offset;
             var date = MessageHelper.ParseDateTime("20151231234500.1234-2358", out offset).Value;
             // Assert.AreEqual(0, d
-            Assert.AreEqual(date, new DateTime(2015,12,31,23,45,00,123));
-            Assert.AreEqual(offset, new TimeSpan(-23,58,0));
+            Assert.AreEqual(date, new DateTime(2015, 12, 31, 23, 45, 00, 123));
+            Assert.AreEqual(offset, new TimeSpan(-23, 58, 0));
         }
 
         [TestMethod]
@@ -432,7 +440,7 @@ namespace HL7.Dotnetcore.Test
         [TestMethod]
         public void GetValueTest()
         {
-            var sampleMessage = 
+            var sampleMessage =
                 @"MSH|^~\&|EPIC||||20191107134803|ALEVIB01|ORM^O01|23|T|2.3|||||||||||
 PID|1||MRN_123^^^IDX^MRN||Smith\F\\S\\R\\E\\T\^John||19600101|M";
 
@@ -446,7 +454,7 @@ PID|1||MRN_123^^^IDX^MRN||Smith\F\\S\\R\\E\\T\^John||19600101|M";
         [TestMethod]
         public void SkipInvalidEscapeSequenceTest()
         {
-            var sampleMessage = 
+            var sampleMessage =
                 @"MSH|^~\&|TEST^TEST|TEST|||11111||ADT^A08|11111|P|2.4|||AL||D||||||
 ZZ1|1|139378|20201230100000|ghg^ghgh-HA||s1^OP-Saal 1|gh^gjhg 1|ghg^ghjg-HA|BSV 4\5 re.||||||";
 
@@ -459,7 +467,7 @@ ZZ1|1|139378|20201230100000|ghg^ghgh-HA||s1^OP-Saal 1|gh^gjhg 1|ghg^ghjg-HA|BSV 
         [TestMethod]
         public void CustomDelimiterTest()
         {
-            var encoding = new HL7Encoding 
+            var encoding = new HL7Encoding
             {
                 FieldDelimiter = '1',
                 ComponentDelimiter = '2',
@@ -467,12 +475,12 @@ ZZ1|1|139378|20201230100000|ghg^ghgh-HA||s1^OP-Saal 1|gh^gjhg 1|ghg^ghjg-HA|BSV 
                 RepeatDelimiter = '4',
                 EscapeCharacter = '5'
             };
-                
+
             var message = new Message();
             message.Encoding = encoding;
             message.AddSegmentMSH("FIRST", "SECOND", "THIRD", "FOURTH",
                 "FIFTH", "ORU2R05F5", "SIXTH", "SEVENTH", "2.8");
-            var result = message.SerializeMessage(false);            
+            var result = message.SerializeMessage(false);
 
             Assert.AreEqual("MSH124531", result.Substring(0, 9));
         }
@@ -486,7 +494,7 @@ ZZ1|1|139378|20201230100000|ghg^ghgh-HA||s1^OP-Saal 1|gh^gjhg 1|ghg^ghjg-HA|BSV 
         [DataRow("PV1.7[2].3", "MICHAEL")]
         public void RepetitionTest(string index, string expected)
         {
-            var sampleMessage = 
+            var sampleMessage =
                 @"MSH|^~\&|EPIC||||20191107134803|ALEVIB01|ORM^O01|23|T|2.3|||||||||||
 PID|1||1005555^^^NYU MRN^MRN||OSTRICH^DODUO||19820605|M||U|000 PARK AVE SOUTH^^NEW YORK^NY^10010^US^^^60|60|(555)555-5555^HOME^PH|||S|||999-99-9999|||U||N||||||||
 PV1||O|NWSLED^^^NYULHLI^^^^^LI NW SLEEP DISORDER^^DEPID||||1447312459^DOE^MICHAEL^^^^^^EPIC^^^^PNPI~DOEM06^DOE^MICHAEL^^^^^^KID^^^^KID|1447312459^DOE^MICHAEL^^^^^^EPIC^^^^PNPI~DOEM06^DOE^MICHAEL^^^^^^KID^^^^KID|||||||||||496779945|||||||||||||||||||||||||20191107|||||||V";
@@ -501,7 +509,7 @@ PV1||O|NWSLED^^^NYULHLI^^^^^LI NW SLEEP DISORDER^^DEPID||||1447312459^DOE^MICHAE
         [TestMethod]
         public void InvalidRepetitionTest()
         {
-            var sampleMessage = 
+            var sampleMessage =
                 @"MSH|^~\&|SYSTEM1|ABC|SYSTEM2||201803262027||DFT^P03|20180326202737608457|P|2.3||||||8859/1
 EVN|P03|20180326202540
 PID|1|0002381795|0002381795||Supermann^Peter^^^Herr||19990101|M|||Hamburgerstrasse 123^^Mimamu^BL^12345^CH||123456~123456^^CP||D|2|02|321|8.2.24.||| 
@@ -591,8 +599,8 @@ PV1||A|00004620^00001318^1318||||000123456^Superfrau^Maria W.^|^Superarzt^Anton^
             var enc = new HL7Encoding();
             Segment PID = new Segment("PID", enc);
             Field f = new Field(enc);
-            Field f1 = new Field("A",enc);
-            Field f2 = new Field("B",enc);
+            Field f1 = new Field("A", enc);
+            Field f2 = new Field("B", enc);
 
             f.HasRepetitions = true;
             f.AddRepeatingField(f1);
@@ -600,7 +608,7 @@ PV1||A|00004620^00001318^1318||||000123456^Superfrau^Maria W.^|^Superarzt^Anton^
 
             // Creates a new Field
             PID.AddNewField(f, 1);
-            
+
             Message message = new Message();
             message.AddNewSegment(PID);
             var str = message.SerializeMessage(false);
@@ -630,6 +638,231 @@ PV1||A|00004620^00001318^1318||||000123456^Superfrau^Maria W.^|^Superarzt^Anton^
             var str = message.SerializeMessage(false);
 
             Assert.AreEqual("PID|A&B\r", str);
+        }
+          
+        public void BypassValidationParseMessage()
+        {
+            string sampleMessage = @"MSH|^~\&|SCA|SCA|LIS|LIS|202107300000||ORU^R01||P|2.4|||||||
+PID|1|1234|1234||JOHN^DOE||19000101||||||||||||||
+OBR|1|1234|1234||||20210708|||||||||||||||20210708||||||||||
+OBX|1|TX|SCADOCTOR||^||||||F";
+
+            try
+            {
+                var msg = new Message(sampleMessage);
+                msg.ParseMessage(true);
+
+                Assert.IsNull(msg.MessageControlID, "MessageControlID should be null");
+
+                //just to make sure we have actually parsed the invalid MSH
+                string messageType = msg.GetValue("MSH.9");
+                Assert.AreEqual("ORU^R01", messageType, "Unexpected Message Type");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Unexpected exception", ex);
+            }
+        }
+
+        [TestMethod]
+        public void BypassValidationGetACK()
+        {
+            string sampleMessage = @"MSH|^~\&|SCA|SCA|LIS|LIS|202107300000||ORU^R01||P|2.4|||||||
+PID|1|1234|1234||JOHN^DOE||19000101||||||||||||||
+OBR|1|1234|1234||||20210708|||||||||||||||20210708||||||||||
+OBX|1|TX|SCADOCTOR||^||||||F";
+
+            try
+            {
+                var msg = new Message(sampleMessage);
+                msg.ParseMessage(true);
+
+                var ack = msg.GetACK(true);
+                string sendingApp = ack.GetValue("MSH.3");
+                string sendingFacility = ack.GetValue("MSH.4");
+                string receivingApp = ack.GetValue("MSH.5");
+                string receivingFacility = ack.GetValue("MSH.6");
+                string messageType = ack.GetValue("MSH.9");
+
+                Assert.IsNull(ack.MessageControlID, "MessageControlID should be null");
+                Assert.AreEqual("LIS", sendingApp, "Unexpected Sending Application");
+                Assert.AreEqual("LIS", sendingApp, "Unexpected Sending Facility");
+                Assert.AreEqual("SCA", receivingApp, "Unexpected Receiving Application");
+                Assert.AreEqual("SCA", receivingFacility, "Unexpected Receiving Facility");
+                Assert.AreEqual("ACK", messageType, "Unexpected Message Type");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Unexpected exception", ex);
+            }
+        }
+
+        [TestMethod]
+        public void BypassValidationGetNACK()
+        {
+            string sampleMessage = @"MSH|^~\&|SCA|SCA|LIS|LIS|202107300000||ORU^R01||P|2.4|||||||
+PID|1|1234|1234||JOHN^DOE||19000101||||||||||||||
+OBR|1|1234|1234||||20210708|||||||||||||||20210708||||||||||
+OBX|1|TX|SCADOCTOR||^||||||F";
+
+            try
+            {
+                var msg = new Message(sampleMessage);
+                msg.ParseMessage(true);
+
+                var nack = msg.GetNACK("AE", "Unit test", true);
+                string sendingApp = nack.GetValue("MSH.3");
+                string sendingFacility = nack.GetValue("MSH.4");
+                string receivingApp = nack.GetValue("MSH.5");
+                string receivingFacility = nack.GetValue("MSH.6");
+                string messageType = nack.GetValue("MSH.9");
+                string code = nack.GetValue("MSA.1");
+                string errorMessage = nack.GetValue("MSA.3");
+
+                Assert.IsNull(nack.MessageControlID, "MessageControlID should be null");
+                Assert.AreEqual("LIS", sendingApp, "Unexpected Sending Application");
+                Assert.AreEqual("LIS", sendingApp, "Unexpected Sending Facility");
+                Assert.AreEqual("SCA", receivingApp, "Unexpected Receiving Application");
+                Assert.AreEqual("SCA", receivingFacility, "Unexpected Receiving Facility");
+                Assert.AreEqual("ACK", messageType, "Unexpected Message Type");
+
+                Assert.AreEqual("AE", code, "Unexpected Error Code");
+                Assert.AreEqual("Unit test", errorMessage, "Unexpected Error Message");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Unexpected exception", ex);
+            }
+        }
+
+        [TestMethod]
+        public void SetValueSingleSegment()
+        {
+            var strValueFormat = "PID.2.1";
+            var unchangedValuePath = "PID.3.1";
+            var newPatientId = "1234567";
+            var message = new Message(HL7_ADT);
+            message.ParseMessage();
+
+            message.SetValue(strValueFormat, newPatientId);
+            
+            Assert.AreEqual(newPatientId, message.GetValue(strValueFormat));
+            Assert.AreEqual("454721", message.GetValue(unchangedValuePath));
+        }
+
+        [TestMethod]
+        public void SetValueRepeatingSegments()
+        {
+            var strValueFormat = "NK1.2.1";
+            var unchangedValuePath = "NK1.2.2";
+            var newFamilyName = "SCHMOE";
+            var message = new Message(HL7_ADT);
+            message.ParseMessage();
+
+            message.SetValue(strValueFormat, newFamilyName);
+
+            var firstNK1ChangedValue = message.GetValue(strValueFormat);
+            var firstNK1UnchangedValue = message.GetValue(unchangedValuePath);
+            Assert.IsTrue(message.RemoveSegment("NK1", 0));
+            var secondNk1ChangedValue = message.GetValue(strValueFormat);
+            var secondNk1UnchangedValue = message.GetValue(unchangedValuePath);
+
+            Assert.AreEqual(newFamilyName, firstNK1ChangedValue);
+            Assert.AreEqual(newFamilyName, secondNk1ChangedValue);
+            Assert.AreEqual("MARIE", firstNK1UnchangedValue);
+            Assert.AreEqual("JHON", secondNk1UnchangedValue);
+        }
+
+        [TestMethod]
+        public void SetValueUnavailableComponents()
+        {
+            var sampleMessage = @"MSH|^~\&|SYSTEM1|ABC|SYSTEM2||201803262027||DFT^P03|20180326202737608457|P|2.3|||"
+                                    +"\nPID|1|0002381795|0002381795||Supermann^Peter^^^Herr||19990101|M|||";
+            var testValue = "test";
+            var message = new Message(sampleMessage);
+            message.ParseMessage();
+
+            var invalidRequest = Assert.ThrowsException<HL7Exception>(() => message.SetValue("", testValue));
+            Assert.IsTrue(invalidRequest.Message.Contains("Request format"), "Should have thrown exception because of invalid request format");
+            
+            var unavailableSegment = Assert.ThrowsException<HL7Exception>(() => message.SetValue("OBX.1", testValue));
+            Assert.IsTrue(unavailableSegment.Message.Contains("Segment name"), "Should have thrown exception because of unavailable Segment");
+            
+            var segmentLevel = Assert.ThrowsException<HL7Exception>(() => message.SetValue("PID.30", testValue));
+            Assert.IsTrue(segmentLevel.Message.Contains("Field not available"), "Should have thrown exception because of unavailable Field");
+            
+            var componentLevel = Assert.ThrowsException<HL7Exception>(() => message.SetValue("PID.3.7", testValue));
+            Assert.IsTrue(componentLevel.Message.Contains("Component not available"), "Should have thrown exception because of unavailable Component");
+            
+            var subComponentLevel = Assert.ThrowsException<HL7Exception>(() => message.SetValue("PID.3.1.2", testValue));
+            Assert.IsTrue(subComponentLevel.Message.Contains("SubComponent not available"), "Should have thrown exception because of unavailable SubComponent");
+        }
+
+        [TestMethod]
+        public void SetValueAvailableComponents()
+        {
+            var testValue = "test";
+            var message = new Message(HL7_ADT);
+            message.ParseMessage();
+
+            Assert.IsTrue(message.SetValue("PID.1", testValue), "Should have successfully set value of Field");
+            Assert.AreEqual(testValue, message.GetValue("PID.1"));
+            
+            Assert.IsTrue(message.SetValue("PID.2.2", testValue), "Should have successfully set value of Component");
+            Assert.AreEqual(testValue, message.GetValue("PID.2.2"));
+            
+            Assert.IsTrue(message.SetValue("PID.2.4.1", testValue), "Should have successfully set value of SubComponent");
+            Assert.AreEqual(testValue, message.GetValue("PID.2.4.1"));
+        }
+
+        [TestMethod]
+        public void MessageIsComponentized()
+        {
+            string sampleMessage = this.HL7_ADT;
+            var message = new Message(sampleMessage);
+            message.ParseMessage();
+
+            Assert.IsTrue(message.IsComponentized("PID.5"));
+        }
+
+        [TestMethod]
+        public void FieldHasRepetitions()
+        {
+            string sampleMessage = this.HL7_ADT;
+            var message = new Message(sampleMessage);
+            message.ParseMessage();
+            Console.WriteLine(message.Segments("PID")[0].Fields(18).Value);
+            Assert.IsFalse(message.HasRepetitions("PID.3"));
+            //Assert.IsTrue(message.HasRepetitions("PID.18")); // Possible bug in the upstream library
+        }
+
+        [TestMethod]
+        public void SequenceNo()
+        {
+            string sampleMessage = @"MSH|^~\&|MEDAT|AESCU|IXZENT||20210714122713|MEDAT_KC|ORU^R01|6227281|P|2.3|||||||
+PID|||||Kuh^Klarabella||19901224|F|||Bogus St^^Gotham^^42069^|||||||||||||
+PV1||2|Jenkins||||||||||||||||AP0999923||P|||||||
+ORC||0490000001|0490000001||CM||||202107141056
+OBR|1|0490000001|0490000001|LH^LH^FN|||202107141056|20210714122713||||||202107141056|1||||||||||F|
+OBX|1|NM|LH^LH^FN||20.00|mIU/ml|||||F||
+NTE|1||      Follikelphase:    2.4 -  12.6 mIU/ml
+NTE|2||      Ovulationsphase: 14.0 - 95.6 mIU/ml
+NTE|3||      Lutealphase:      1.0 - 11.4 mIU/ml
+NTE|4||      Postmenopause:    7.7 - 58.5 mIU/ml
+OBR|2|0490000001|0490000001|FSH^FSH^FN|||202107141056|20210714122713||||||202107141056|1||||||||||F|
+OBX|1|NM|FSH^FSH^FN||30.00|mIU/ml|||||F||
+NTE|1||      Follikelphase:    3.5 - 12.5 mIU/ml
+NTE|2||      Ovulationsphase:  4.7 - 21.5 mIU/ml
+NTE|3||      Lutealphase:       1.7 - 7.7 mIU/ml
+NTE|4||      Postmenopause:  25.8 - 134.8 mIU/ml";
+            var message = new Message(sampleMessage);
+            message.ParseMessage();
+
+            var nte = message.Segments("NTE")[0];
+            Assert.AreEqual(6, nte.GetSequenceNo());
+
+            nte = message.Segments("NTE")[4];
+            Assert.AreEqual(12, nte.GetSequenceNo());
         }
     }
 }
