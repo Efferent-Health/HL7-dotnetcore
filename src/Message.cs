@@ -19,7 +19,7 @@ namespace HL7.Dotnetcore
         public int SegmentCount { get; set; }
         public HL7Encoding Encoding { get; set; } = new HL7Encoding();
 
-        private const string segmentRegex = "^([A-Z][A-Z][A-Z1-9])([\(\[]([0-9]+)[\)\]]){0,1}$";
+        private const string segmentRegex = @"^([A-Z][A-Z][A-Z1-9])([\(\[]([0-9]+)[\)\]]){0,1}$";
         private const string fieldRegex = @"^([0-9]+)([\(\[]([0-9]+)[\)\]]){0,1}$";
         private const string otherRegEx = @"^[1-9]([0-9]{1,2})?$";
 
@@ -219,7 +219,7 @@ namespace HL7.Dotnetcore
         public string GetValue(string strValueFormat)
         {
             string segmentName = string.Empty;
-            string segmentNumber = 0;
+            int segmentNumber = 0;
             int componentIndex = 0;
             int subComponentIndex = 0;
             string strValue = string.Empty;
