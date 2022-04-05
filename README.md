@@ -112,6 +112,10 @@ string SendingFacility = message.GetValue("MSH.4");
 
 // OR
 
+string SendingFacility = message.GetValue("MSH(1).4");
+
+// OR
+
 string SendingFacility = message.DefaultSegment("MSH").Fields(4).Value;
 
 // OR
