@@ -19,7 +19,7 @@ namespace HL7.Dotnetcore
         public int SegmentCount { get; set; }
         public HL7Encoding Encoding { get; set; } = new HL7Encoding();
 
-        private const string segmentRegex = "^[A-Z][A-Z][A-Z1-9]$";
+        private const string segmentRegex = "^([A-Z][A-Z][A-Z1-9])([\(\[]([0-9]+)[\)\]]){0,1}$";
         private const string fieldRegex = @"^([0-9]+)([\(\[]([0-9]+)[\)\]]){0,1}$";
         private const string otherRegEx = @"^[1-9]([0-9]{1,2})?$";
 
@@ -219,6 +219,7 @@ namespace HL7.Dotnetcore
         public string GetValue(string strValueFormat)
         {
             string segmentName = string.Empty;
+            string segmentNumber = 0;
             int componentIndex = 0;
             int subComponentIndex = 0;
             string strValue = string.Empty;
@@ -229,11 +230,21 @@ namespace HL7.Dotnetcore
 
             if (isValid)
             {
-                segmentName = allComponents[0];
+                var matches = System.Text.RegularExpressions.Regex.Matches(allComponents[0], segmentRegex);
+                if (matches.Count < 1)
+                    throw new HL7Exception("Request format is not valid: " + strValueFormat);
+
+                segmentName = matches[0].Groups[1].Value;
+                if (matches[0].Length > 3) 
+                {
+                    Int32.TryParse(matches[0].Groups[3].Value, out segmentNumber);
+                    segmentNumber--;
+                }
 
                 if (SegmentList.ContainsKey(segmentName))
                 {
-                    var segment = SegmentList[segmentName].First();
+
+                    var segment = SegmentList[segmentName][segmentNumber];
 
                     if (comCount == 4)
                     {

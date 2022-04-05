@@ -86,6 +86,16 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
+        public void ReadFieldTest2()
+        {
+            var message = new Message(this.HL7_ADT);
+            message.ParseMessage();
+
+            var NK1_2_2 = message.GetValue("NK1(2).2");
+            Assert.AreEqual("DOE^JHON^^^^", NK1_2_2);
+        }
+
+        [TestMethod]
         public void ReadComponentTest()
         {
             var message = new Message(this.HL7_ADT);
