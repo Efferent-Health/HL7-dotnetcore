@@ -175,15 +175,23 @@ namespace HL7.Dotnetcore
                 var nextCharacterIndex = i + 1;
                 int li = encodedValue.IndexOf(this.EscapeCharacter, nextCharacterIndex);
 
+                // Increase index position even on continue.
+                i++;
+
                 if (li == -1)
                 {
-                    // throw new HL7Exception("Invalid escape sequence in HL7 string");
-                    result.Append(this.EscapeCharacter);
-                    result.Append(encodedValue[i]);
+                    if (i >= encodedValue.Length)
+                    {
+                        // Appends the escape character as final.
+                        result.Append(encodedValue[i - 1]);
+                    } else
+                    {
+                        // Skips and appends an escape character with it's value.
+                        result.Append(this.EscapeCharacter);
+                        result.Append(encodedValue[i]);
+                    }
                     continue;
                 }
-
-                i++;
 
                 string seq = encodedValue.Substring(i, li-i);
                 i = li;

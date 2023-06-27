@@ -58,12 +58,12 @@ namespace HL7.Dotnetcore.Test
         }
 
         [TestMethod]
-        public void FailToParse_Test()
+        public void ParseTest3()
         {
             var message = new Message(this.HL7_BROKEN_SAMPLE_1);
 
             var isParsed = message.ParseMessage();
-            Assert.IsFalse(isParsed);
+            Assert.IsTrue(isParsed);
         }
 
 
