@@ -172,8 +172,8 @@ namespace HL7.Dotnetcore
                     continue;
                 }
 
-                i++;
-                int li = encodedValue.IndexOf(this.EscapeCharacter, i);
+                var nextCharacterIndex = i + 1;
+                int li = encodedValue.IndexOf(this.EscapeCharacter, nextCharacterIndex);
 
                 if (li == -1)
                 {
@@ -182,7 +182,8 @@ namespace HL7.Dotnetcore
                     result.Append(encodedValue[i]);
                     continue;
                 }
-                
+
+                i++;
 
                 string seq = encodedValue.Substring(i, li-i);
                 i = li;

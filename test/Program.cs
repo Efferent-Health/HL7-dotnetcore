@@ -10,6 +10,7 @@ namespace HL7.Dotnetcore.Test
     {
         private string HL7_ORM;
         private string HL7_ADT;
+        private string HL7_BROKEN_SAMPLE_1;
 
         public static void Main(string[] args)
         {
@@ -25,6 +26,7 @@ namespace HL7.Dotnetcore.Test
             var path = Path.GetDirectoryName(typeof(HL7Test).GetTypeInfo().Assembly.Location) + "/";
             this.HL7_ORM = File.ReadAllText(path + "Sample-ORM.txt");
             this.HL7_ADT = File.ReadAllText(path + "Sample-ADT.txt");
+            this.HL7_BROKEN_SAMPLE_1 = File.ReadAllText(path + "Sample-BrokenCharacterMessage.txt");
         }
 
         [TestMethod]
@@ -53,6 +55,15 @@ namespace HL7.Dotnetcore.Test
 
             var isParsed = message.ParseMessage();
             Assert.IsTrue(isParsed);
+        }
+
+        [TestMethod]
+        public void FailToParse_Test()
+        {
+            var message = new Message(this.HL7_BROKEN_SAMPLE_1);
+
+            var isParsed = message.ParseMessage();
+            Assert.IsFalse(isParsed);
         }
 
 
@@ -851,6 +862,22 @@ OBX|1|TX|SCADOCTOR||^||||||F";
         public void DecodedValue1()
         {
             var msg = "MSH|^~\\&|SAP|aaa|JCAPS||20210330150502||ADT^A28|0000000111300053|P|2.5||||||UNICODE UTF-8\r\nPID|||704251200^^^SAP^PI^0001~XXXXXXX^^^SS^SS^066^20210330~\"\"^^^^PRC~\"\"^^^^DL~\"\"^^^^PPN~XXXXXXXX^^^Ministero finanze^NN~\"\"^^^^PNT^^^\"\"~\"\"^^^^NPI^^\"\"^^\"\"&&\"\"^\"\"&\"\"||TEST\\F\\TEST^TEST2^^^SIG.^\"\"||19610926|M|||^^SANTEUSANIO FORCONESE^^^IT^BDL^^066090~&VIA DELLA PIEGA 12 TRALLaae^\"\"^SANTEUSANIO FORCONESE^AQ^67020^IT^L^^066090^^^^20210330||^ORN^^^^^^^^^^349 6927621~^NET^^\"\"|||2||||||||||IT^^100^Italiana|||\"\"||||20160408\r\n";
+
+            var message = new Message(msg);
+            message.ParseMessage();
+
+            var field = message.GetValue("PID.5");
+            var component = message.GetValue("PID.5.1");
+            var subcomponent = message.GetValue("PID.5.1.1");
+
+            Assert.AreEqual(component, subcomponent);
+            Assert.IsTrue(field.StartsWith(component));
+        }
+
+        [TestMethod]
+        public void DecodedValue3()
+        {
+            var msg = this.HL7_BROKEN_SAMPLE_1;
 
             var message = new Message(msg);
             message.ParseMessage();
