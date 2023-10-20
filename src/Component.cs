@@ -40,7 +40,7 @@ namespace HL7.Dotnetcore
 
             foreach (string strSubComponent in allSubComponents)
             {
-                SubComponent subComponent = new SubComponent(this.Encoding.Decode(strSubComponent), this.Encoding);
+                SubComponent subComponent = new SubComponent(strSubComponent, this.Encoding);
                 SubComponentList.Add(subComponent);
             }
         }
