@@ -309,7 +309,7 @@ namespace HL7.Dotnetcore
                 throw new HL7Exception("Request format is not valid: " + strValueFormat);
             }
 
-            return this.Encoding.Decode(strValue);
+            return strValue;
         }
 
         /// <summary>
