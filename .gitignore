@@ -6,3 +6,5 @@ project.lock.json
 /packages
 /node_modules
 **/*.suo
+.vs
+.idea

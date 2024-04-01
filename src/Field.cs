@@ -96,7 +96,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Unable to add new component Error - " + ex.Message);
+                throw new HL7Exception("Unable to add new component Error - " + ex.Message, ex);
             }
         }
 
@@ -109,7 +109,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Unable to add new component Error - " + ex.Message);
+                throw new HL7Exception("Unable to add new component Error - " + ex.Message, ex);
             }
         }
 
@@ -123,7 +123,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Component not available Error - " + ex.Message);
+                throw new HL7Exception("Component not available Error - " + ex.Message, ex);
             }
         }
 
@@ -166,13 +166,13 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Error removing trailing comonents - " + ex.Message);
+                throw new HL7Exception("Error removing trailing components - " + ex.Message, ex);
             }
         }
         public void AddRepeatingField(Field field) {
             if (!this.HasRepetitions) 
             {
-                throw new HL7Exception("Repeating field must have repetions (HasRepetitions = true)");
+                throw new HL7Exception("Repeating field must have repetitions (HasRepetitions = true)");
             }
             if (_RepetitionList == null) 
             {

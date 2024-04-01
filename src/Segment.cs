@@ -98,7 +98,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Unable to add new field in segment " + this.Name + " Error - " + ex.Message);
+                throw new HL7Exception("Unable to add new field in segment " + this.Name + " Error - " + ex.Message, ex);
             }
         }
 
@@ -112,7 +112,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Field not available Error - " + ex.Message);
+                throw new HL7Exception("Field not available Error - " + ex.Message, ex);
             }
         }
 

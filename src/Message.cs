@@ -77,7 +77,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Unhandled Exception in validation - " + ex.Message, HL7Exception.BAD_MESSAGE);
+                throw new HL7Exception("Unhandled Exception in validation - " + ex.Message, HL7Exception.BAD_MESSAGE, ex);
             }
 
             if (isValid)
@@ -114,7 +114,7 @@ namespace HL7.Dotnetcore
                     }
                     catch (HL7Exception ex)
                     {
-                        throw new HL7Exception("Failed to serialize parsed message with error - " + ex.Message, HL7Exception.PARSING_ERROR);
+                        throw new HL7Exception("Failed to serialize parsed message with error - " + ex.Message, HL7Exception.PARSING_ERROR, ex);
                     }
 
                     if (!string.IsNullOrEmpty(strSerializedMessage))
@@ -129,7 +129,7 @@ namespace HL7.Dotnetcore
                 }
                 catch (Exception ex)
                 {
-                    throw new HL7Exception("Failed to parse the message with error - " + ex.Message, HL7Exception.PARSING_ERROR);
+                    throw new HL7Exception("Failed to parse the message with error - " + ex.Message, HL7Exception.PARSING_ERROR, ex);
                 }
             }
             
@@ -198,7 +198,7 @@ namespace HL7.Dotnetcore
                 catch (Exception ex)
                 {
                     if (currentSegName == "MSH")
-                        throw new HL7Exception("Failed to serialize the MSH segment with error - " + ex.Message, HL7Exception.SERIALIZATION_ERROR);
+                        throw new HL7Exception("Failed to serialize the MSH segment with error - " + ex.Message, HL7Exception.SERIALIZATION_ERROR, ex);
                     else 
                         throw;
                 }
@@ -207,7 +207,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Failed to serialize the message with error - " + ex.Message, HL7Exception.SERIALIZATION_ERROR);
+                throw new HL7Exception("Failed to serialize the message with error - " + ex.Message, HL7Exception.SERIALIZATION_ERROR, ex);
             }
         }
 
@@ -258,7 +258,7 @@ namespace HL7.Dotnetcore
                         }
                         catch (Exception ex)
                         {
-                            throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message);
+                            throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message, ex);
                         }
                     }
                     else if (comCount == 3)
@@ -272,7 +272,7 @@ namespace HL7.Dotnetcore
                         }
                         catch (Exception ex)
                         {
-                            throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message);
+                            throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message, ex);
                         }
                     }
                     else if (comCount == 2)
@@ -284,7 +284,7 @@ namespace HL7.Dotnetcore
                         }
                         catch (Exception ex)
                         {
-                            throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
+                            throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message, ex);
                         }
                     }
                     else
@@ -295,7 +295,7 @@ namespace HL7.Dotnetcore
                         }
                         catch (Exception ex)
                         {
-                            throw new HL7Exception("Segment value not available - " + strValueFormat + " Error: " + ex.Message);
+                            throw new HL7Exception("Segment value not available - " + strValueFormat + " Error: " + ex.Message, ex);
                         }
                     }
                 }
@@ -349,7 +349,7 @@ namespace HL7.Dotnetcore
                             }
                             catch (Exception ex)
                             {
-                                throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message);
+                                throw new HL7Exception("SubComponent not available - " + strValueFormat + " Error: " + ex.Message, ex);
                             }
                         }
                         else if (comCount == 3)
@@ -364,7 +364,7 @@ namespace HL7.Dotnetcore
                             }
                             catch (Exception ex)
                             {
-                                throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message);
+                                throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message, ex);
                             }
                         }
                         else if (comCount == 2)
@@ -377,7 +377,7 @@ namespace HL7.Dotnetcore
                             }
                             catch (Exception ex)
                             {
-                                throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
+                                throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message, ex);
                             }
                         }
                         else
@@ -424,7 +424,7 @@ namespace HL7.Dotnetcore
                     }
                     catch (Exception ex)
                     {
-                        throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
+                        throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message, ex);
                     }
                 }
                 else
@@ -463,7 +463,7 @@ namespace HL7.Dotnetcore
                     }
                     catch (Exception ex)
                     {
-                        throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message);
+                        throw new HL7Exception("Field not available - " + strValueFormat + " Error: " + ex.Message, ex);
                     }
                 }
                 else
@@ -503,7 +503,7 @@ namespace HL7.Dotnetcore
                     }
                     catch (Exception ex)
                     {
-                        throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message);
+                        throw new HL7Exception("Component not available - " + strValueFormat + " Error: " + ex.Message, ex);
                     }
                 }
                 else
@@ -557,7 +557,7 @@ namespace HL7.Dotnetcore
             catch (Exception ex)
             {
                 SegmentCount--;
-                throw new HL7Exception("Unable to add new segment. Error - " + ex.Message);
+                throw new HL7Exception("Unable to add new segment. Error - " + ex.Message, ex);
             }
         }
 
@@ -585,7 +585,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Unable to add remove segment. Error - " + ex.Message);
+                throw new HL7Exception("Unable to add remove segment. Error - " + ex.Message, ex);
             }
         }
 
@@ -852,7 +852,7 @@ namespace HL7.Dotnetcore
                     }
                     catch (System.IndexOutOfRangeException e)
                     {
-                        throw new HL7Exception("Can't find message structure (MSH.9.3) - " + e.Message, HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
+                        throw new HL7Exception("Can't find message structure (MSH.9.3) - " + e.Message, HL7Exception.UNSUPPORTED_MESSAGE_TYPE, e);
                     }
 
                     try
@@ -864,7 +864,7 @@ namespace HL7.Dotnetcore
                     }
                     catch (Exception ex)
                     {
-                        throw new HL7Exception("Error occured while accessing MSH.10 - " + ex.Message, HL7Exception.REQUIRED_FIELD_MISSING);
+                        throw new HL7Exception("Error occured while accessing MSH.10 - " + ex.Message, HL7Exception.REQUIRED_FIELD_MISSING, ex);
                     }
 
                     try
@@ -876,7 +876,7 @@ namespace HL7.Dotnetcore
                     }
                     catch (Exception ex)
                     {
-                        throw new HL7Exception("Error occured while accessing MSH.11 - " + ex.Message, HL7Exception.REQUIRED_FIELD_MISSING);
+                        throw new HL7Exception("Error occured while accessing MSH.11 - " + ex.Message, HL7Exception.REQUIRED_FIELD_MISSING, ex);
                     }
                 }
                 else
@@ -884,7 +884,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("Failed to validate the message with error - " + ex.Message, HL7Exception.BAD_MESSAGE);
+                throw new HL7Exception("Failed to validate the message with error - " + ex.Message, HL7Exception.BAD_MESSAGE, ex);
             }
 
             return true;

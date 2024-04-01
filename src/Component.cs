@@ -55,7 +55,7 @@ namespace HL7.Dotnetcore
             }
             catch (Exception ex)
             {
-                throw new HL7Exception("SubComponent not availalbe Error-" + ex.Message);
+                throw new HL7Exception("SubComponent not available Error-" + ex.Message, ex);
             }
         }
 
