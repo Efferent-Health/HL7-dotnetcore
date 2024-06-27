@@ -4,6 +4,16 @@ namespace HL7.Dotnetcore
 {
     internal class ComponentCollection : List<Component>
     {
+        
+        
+        public ComponentCollection()
+        {}
+
+        public ComponentCollection(int initialCapacity) : base(initialCapacity)
+        {}
+
+
+        
         /// <summary>
         /// Component indexer
         /// </summary>

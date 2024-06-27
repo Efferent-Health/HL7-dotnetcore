@@ -37,15 +37,16 @@ namespace HL7.Dotnetcore
             }
         }
 
+        
+        private static readonly string[] _delimiters = { "\r\n", "\n\r", "\r", "\n" };
+        
         public void EvaluateSegmentDelimiter(string message)
         {
-            string[] delimiters = new[] { "\r\n", "\n\r", "\r", "\n" };
-
-            foreach (var delim in delimiters)
+            foreach (var delim in _delimiters)
             {
                 if (message.Contains(delim))
                 {
-                    this.SegmentDelimiter = delim;
+                    SegmentDelimiter = delim;
                     return;
                 }
             }
@@ -159,6 +160,12 @@ namespace HL7.Dotnetcore
         {
             if (string.IsNullOrWhiteSpace(encodedValue))
                 return encodedValue;
+            
+            if (!encodedValue.Contains(EscapeCharacter))
+            {
+                // no need to decode, just return as is
+                return encodedValue;
+            }
 
             var result = new StringBuilder();
 

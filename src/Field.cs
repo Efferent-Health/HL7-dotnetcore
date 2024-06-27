@@ -35,7 +35,7 @@ namespace HL7.Dotnetcore
             {
                 var subcomponent = new SubComponent(_value, this.Encoding);
 
-                this.ComponentList = new ComponentCollection();
+                this.ComponentList.Clear();
                 Component component = new Component(this.Encoding, true);
 
                 component.SubComponentList.Add(subcomponent);
@@ -61,7 +61,7 @@ namespace HL7.Dotnetcore
             {
                 List<string> allComponents = MessageHelper.SplitString(_value, this.Encoding.ComponentDelimiter);
 
-                this.ComponentList = new ComponentCollection();
+                this.ComponentList = new ComponentCollection(allComponents.Count);
 
                 foreach (string strComponent in allComponents)
                 {

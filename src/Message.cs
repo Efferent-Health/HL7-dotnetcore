@@ -223,7 +223,7 @@ namespace HL7.Dotnetcore
             int componentIndex = 0;
             int subComponentIndex = 0;
             string strValue = string.Empty;
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, new char[] { '.' });
+            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
 
             int comCount = allComponents.Count;
             bool isValid = validateValueFormat(allComponents);
@@ -324,7 +324,7 @@ namespace HL7.Dotnetcore
             string segmentName = string.Empty;
             int componentIndex = 0;
             int subComponentIndex = 0;
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, new char[] { '.' });
+            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
             int comCount = allComponents.Count;
             bool isValid = validateValueFormat(allComponents);
 
@@ -405,7 +405,7 @@ namespace HL7.Dotnetcore
         {
             bool isComponentized = false;
             string segmentName = string.Empty;
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, new char[] { '.' });
+            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
             int comCount = allComponents.Count;
             bool isValid = validateValueFormat(allComponents);
 
@@ -436,6 +436,8 @@ namespace HL7.Dotnetcore
             return isComponentized;
         }
 
+
+        private static char[] _queryDelim = { '.' };
         /// <summary>
         /// Checks if specified fields has repetitions
         /// </summary>
@@ -443,15 +445,13 @@ namespace HL7.Dotnetcore
         /// <returns>boolean</returns>
         public bool HasRepetitions(string strValueFormat)
         {
-            string segmentName = string.Empty;
-
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, new char[] { '.' });
+            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
             int comCount = allComponents.Count;
             bool isValid = validateValueFormat(allComponents);
 
             if (isValid)
             {
-                segmentName = allComponents[0];
+                var segmentName = allComponents[0];
                 var segment = SegmentList[segmentName].First();
                 
                 if (comCount >= 2)
@@ -483,7 +483,7 @@ namespace HL7.Dotnetcore
             bool isSubComponentized = false;
             string segmentName = string.Empty;
             int componentIndex = 0;
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, new char[] { '.' });
+            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
             int comCount = allComponents.Count;
             bool isValid = validateValueFormat(allComponents);
 

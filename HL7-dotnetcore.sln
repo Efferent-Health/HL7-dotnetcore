@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hl7-dotnetcore", "src\HL7-d
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hl7test", "test\HL7test.csproj", "{910F6F49-6AD7-45EF-8FA0-E141C77D81DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{27FBB293-28C9-43DE-919A-3128AC92A1ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{910F6F49-6AD7-45EF-8FA0-E141C77D81DA}.Release|x64.Build.0 = Release|x64
 		{910F6F49-6AD7-45EF-8FA0-E141C77D81DA}.Release|x86.ActiveCfg = Release|x86
 		{910F6F49-6AD7-45EF-8FA0-E141C77D81DA}.Release|x86.Build.0 = Release|x86
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Debug|x64.Build.0 = Debug|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Debug|x86.Build.0 = Debug|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Release|x64.ActiveCfg = Release|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Release|x64.Build.0 = Release|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Release|x86.ActiveCfg = Release|Any CPU
+		{27FBB293-28C9-43DE-919A-3128AC92A1ED}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

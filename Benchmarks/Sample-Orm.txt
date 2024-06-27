@@ -1,0 +1,7 @@
+MSH|^~\&|Organization||ALLINA||20170331171205||ORM^O01|3149|P|2.3||||NE
+PID|1|42311|42311|42311|Jane^Doe^T||19921112|M|||123 Worth Drive^^Troy^OH^45373^^Home||9373328660^Phone^Home^^^937^3338660|||||42311|111223333|||^Unknown^CDCREC
+PV1|1|1|^^^^^^^^Oak Ridge Big Name Location||||^Smith (M)^Michael|||||||||||||||||||||||||||||||||||||20170331
+ORC|NW|11777-60|||||^^^20170331||20170331171150|||^Smith (M)^Michael|^^^^^^^^Oak Ridge Big Name Location||20170331
+OBR|1|11777-60||4241^BRAZIL NUT (F18) IGE - 86003^AllinaCodes||20170331171150|20170331|||||||||^Smith (M)^Michael|||||||||||^^^201703311200
+NTE|1||some text\.br\some text after \H\new line\N\\.br\issue Efferent-Health#82
+NTE|1||some text\X0D\\X0A\some text after new line\X0D\\X0A\issue Efferent-Health#81
