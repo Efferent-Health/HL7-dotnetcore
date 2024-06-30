@@ -135,18 +135,16 @@ namespace HL7.Dotnetcore
         public List<Field> Repetitions()
         {
             if (this.HasRepetitions)
-            {
                 return RepetitionList;
-            }
+
             return null;
         }
 
         public Field Repetitions(int repetitionNumber)
         {
             if (this.HasRepetitions)
-            {
                 return RepetitionList[repetitionNumber - 1];
-            }
+
             return null;
         }
 
@@ -169,15 +167,14 @@ namespace HL7.Dotnetcore
                 throw new HL7Exception("Error removing trailing components - " + ex.Message, ex);
             }
         }
-        public void AddRepeatingField(Field field) {
+        public void AddRepeatingField(Field field) 
+        {
             if (!this.HasRepetitions) 
-            {
                 throw new HL7Exception("Repeating field must have repetitions (HasRepetitions = true)");
-            }
+
             if (_RepetitionList == null) 
-            {
                 _RepetitionList = new List<Field>(); 
-            }
+
             _RepetitionList.Add(field);
         }
     }
