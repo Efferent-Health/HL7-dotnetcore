@@ -6,13 +6,13 @@ namespace HL7.Dotnetcore
 {
     public class HL7Encoding
     {
-        public char FieldDelimiter { get; set; } = '|'; // \F\
-        public char ComponentDelimiter { get; set; } = '^'; // \S\
-        public char RepeatDelimiter { get; set; } = '~';  // \R\
-        public char EscapeCharacter { get; set; } = '\\'; // \E\
+        public char FieldDelimiter { get; set; } = '|';        // \F\
+        public char ComponentDelimiter { get; set; } = '^';    // \S\
+        public char RepeatDelimiter { get; set; } = '~';       // \R\
+        public char EscapeCharacter { get; set; } = '\\';      // \E\
         public char SubComponentDelimiter { get; set; } = '&'; // \T\
-        public string SegmentDelimiter { get; set; } = "\r";
-        public string PresentButNull { get; set; } = "\"\"";
+        public string SegmentDelimiter { get; set; } = "\r";   // {cr}
+        public string PresentButNull { get; set; } = "\"\"";   // ""
         public string AllDelimiters => "" + FieldDelimiter + ComponentDelimiter + RepeatDelimiter + (EscapeCharacter == (char)0 ? "" : EscapeCharacter.ToString()) + SubComponentDelimiter;
 
         public HL7Encoding()
@@ -36,7 +36,6 @@ namespace HL7.Dotnetcore
                 this.SubComponentDelimiter = delimiters[4];
             }
         }
-
         
         private static readonly string[] _delimiters = { "\r\n", "\n\r", "\r", "\n" };
         
@@ -99,7 +98,9 @@ namespace HL7.Dotnetcore
                         i += 3; // +1 in loop
                     }
                     else
+                    {
                         continueEncoding = true;
+                    }
                 }
                 
                 if (continueEncoding)
@@ -189,7 +190,6 @@ namespace HL7.Dotnetcore
                     result.Append(encodedValue[i]);
                     continue;
                 }
-                
 
                 string seq = encodedValue.Substring(i, li-i);
                 i = li;
