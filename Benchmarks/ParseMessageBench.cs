@@ -2,14 +2,15 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
+
 using HL7.Dotnetcore;
 using System.IO;
 
 namespace Benchmarks
 {
     /// <summary>
-    /// Basic benchmark comparing the nuget version to our local code, for both Framework 4.8 and net8.  Calls a copy of one of the tests
-    /// that best reflects my usage scenarios (Parse and GetValue)
+    /// Basic benchmark comparing the nuget version to the local code, for both .NET Framework 4.8 and .NET 8.0.  
+    /// Calls a copy of one of the tests that best reflects the usage scenarios (Parse and GetValue)
     /// </summary>
     [Config(typeof(Config))]
     [MemoryDiagnoser]
@@ -25,8 +26,6 @@ namespace Benchmarks
 | ParseMessageAndGetValues | Local Net8   | 50.55 us | 21.651 us | 1.187 us |  0.96 |    0.02 | 12.2070 | 2.0142 | 187.36 KB |        0.89 |
 | ParseMessageAndGetValues | Nuget Net4.8 | 97.66 us | 38.600 us | 2.116 us |  1.86 |    0.05 | 44.4336 | 6.8359 | 273.48 KB |        1.30 |
 | ParseMessageAndGetValues | Nuget Net8   | 52.39 us |  6.528 us | 0.358 us |  1.00 |    0.00 | 13.7329 | 2.3193 | 211.17 KB |        1.00 |
-
-
  */
 
         private class Config : ManualConfig
