@@ -66,10 +66,9 @@ namespace HL7.Dotnetcore
             try
             {
                 if (!bypassValidation)
-                {
                     isValid = this.validateMessage();
-                }
-                else { isValid = true; }
+                else
+                    isValid = true;
             }
             catch (HL7Exception ex)
             {
@@ -157,7 +156,6 @@ namespace HL7.Dotnetcore
                     foreach (Segment seg in _segListOrdered)
                     {
                         currentSegName = seg.Name;
-
                         strMessage.Append(seg.Name);
                         
                         if (seg.FieldList.Count > 0)
@@ -223,18 +221,20 @@ namespace HL7.Dotnetcore
             int componentIndex = 0;
             int subComponentIndex = 0;
             string strValue = string.Empty;
+            
             List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
-
             int comCount = allComponents.Count;
             bool isValid = validateValueFormat(allComponents);
 
             if (isValid)
             {
                 var matches = System.Text.RegularExpressions.Regex.Matches(allComponents[0], segmentRegex);
+                
                 if (matches.Count < 1)
                     throw new HL7Exception("Request format is not valid: " + strValueFormat);
 
                 segmentName = matches[0].Groups[1].Value;
+                
                 if (matches[0].Length > 3) 
                 {
                     Int32.TryParse(matches[0].Groups[3].Value, out segmentOccurrence);
@@ -243,7 +243,6 @@ namespace HL7.Dotnetcore
 
                 if (SegmentList.ContainsKey(segmentName))
                 {
-
                     var segment = SegmentList[segmentName][segmentOccurrence];
 
                     if (comCount == 4)
@@ -436,7 +435,6 @@ namespace HL7.Dotnetcore
             return isComponentized;
         }
 
-
         private static char[] _queryDelim = { '.' };
         /// <summary>
         /// Checks if specified fields has repetitions
@@ -575,6 +573,7 @@ namespace HL7.Dotnetcore
                     return false;
 
                 var list = SegmentList[segmentName];
+                
                 if (list.Count <= index)
                     return false;
 
@@ -762,15 +761,11 @@ namespace HL7.Dotnetcore
                 {
                     // Check message length - MSH+Delimeters+12Fields in MSH
                     if (HL7Message.Length < 20)
-                    {
                         throw new HL7Exception("Message Length too short: " + HL7Message.Length + " chars.", HL7Exception.BAD_MESSAGE);
-                    }
 
                     // Check if message starts with header segment
                     if (!HL7Message.StartsWith("MSH"))
-                    {
                         throw new HL7Exception("MSH segment not found at the beginning of the message", HL7Exception.BAD_MESSAGE);
-                    }
 
                     this.Encoding.EvaluateSegmentDelimiter(this.HL7Message);
                     this.HL7Message = string.Join(this.Encoding.SegmentDelimiter, MessageHelper.SplitMessage(this.HL7Message)) + this.Encoding.SegmentDelimiter;
@@ -788,14 +783,10 @@ namespace HL7.Dotnetcore
                         bool isValidSegmentName = System.Text.RegularExpressions.Regex.IsMatch(segmentName, segmentRegex);
 
                         if (!isValidSegmentName)
-                        {
                             throw new HL7Exception("Invalid segment name found: " + strSegment, HL7Exception.BAD_MESSAGE);
-                        }
 
                         if (strSegment.Length > 3 && fourthCharMSH != strSegment[3])
-                        {
                             throw new HL7Exception("Invalid segment found: " + strSegment, HL7Exception.BAD_MESSAGE);
-                        }
                     }
 
                     string _fieldDelimiters_Message = this.allSegments[0].Substring(3, 8 - 3);
@@ -805,21 +796,15 @@ namespace HL7.Dotnetcore
                     int countFieldSepInMSH = this.allSegments[0].Count(f => f == Encoding.FieldDelimiter);
 
                     if (countFieldSepInMSH < 11)
-                    {
                         throw new HL7Exception("MSH segment doesn't contain all the required fields", HL7Exception.BAD_MESSAGE);
-                    }
 
                     // Find Message Version
                     var MSHFields = MessageHelper.SplitString(this.allSegments[0], Encoding.FieldDelimiter);
 
                     if (MSHFields.Count >= 12)
-                    {
                         this.Version = MessageHelper.SplitString(this.Encoding.Decode(MSHFields[11]), Encoding.ComponentDelimiter)[0];
-                    }
                     else
-                    {
                         throw new HL7Exception("HL7 version not found in the MSH segment", HL7Exception.REQUIRED_FIELD_MISSING);
-                    }
 
                     // Find Message Type & Trigger Event
                     try
@@ -831,24 +816,18 @@ namespace HL7.Dotnetcore
                             var MSH_9_comps = MessageHelper.SplitString(MSH_9, this.Encoding.ComponentDelimiter);
 
                             if (MSH_9_comps.Count >= 3)
-                            {
                                 this.MessageStructure = MSH_9_comps[2];
-                            }
                             else if (MSH_9_comps.Count > 0 && MSH_9_comps[0] != null && MSH_9_comps[0].Equals("ACK"))
-                            {
                                 this.MessageStructure = "ACK";
-                            }
                             else if (MSH_9_comps.Count == 2)
-                            {
                                 this.MessageStructure = MSH_9_comps[0] + "_" + MSH_9_comps[1];
-                            }
                             else
-                            {
                                 throw new HL7Exception("Message Type & Trigger Event value not found in message", HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
-                            }
                         }
                         else
+                        {
                             throw new HL7Exception("MSH.9 not available", HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
+                        }
                     }
                     catch (System.IndexOutOfRangeException e)
                     {
@@ -903,6 +882,7 @@ namespace HL7.Dotnetcore
                 foreach (Component com in field.ComponentList)
                 {
                     indexCom++;
+                    
                     if (com.SubComponentList.Count > 0)
                         strMessage.Append(string.Join(Encoding.SubComponentDelimiter.ToString(), com.SubComponentList.Select(sc => Encoding.Encode(sc.Value))));
                     else
@@ -914,7 +894,6 @@ namespace HL7.Dotnetcore
             }
             else
                 strMessage.Append(Encoding.Encode(field.Value));
-
         }
 
         /// <summary> 
