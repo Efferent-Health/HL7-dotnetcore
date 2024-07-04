@@ -17,6 +17,7 @@ namespace HL7.Dotnetcore
             this.SubComponentList = new List<SubComponent>();
             this.Encoding = encoding;
         }
+
         public Component(string pValue, HL7Encoding encoding)
         {
             this.SubComponentList = new List<SubComponent>();
@@ -26,17 +27,18 @@ namespace HL7.Dotnetcore
 
         protected override void ProcessValue()
         {
-            List<string> allSubComponents;
-            
-            if (this.isDelimiter)
-                allSubComponents = new List<string>(new [] {this.Value});
-            else
-                allSubComponents = MessageHelper.SplitString(_value, this.Encoding.SubComponentDelimiter);
+            string[] allSubComponents;
 
-            if (allSubComponents.Count > 1)
+            if (this.isDelimiter)
+                allSubComponents = new[] { this.Value };
+            else
+                allSubComponents = _value.Split(this.Encoding.SubComponentDelimiter);
+
+            if (allSubComponents.Length > 1)
                 this.IsSubComponentized = true;
 
-            this.SubComponentList = new List<SubComponent>();
+            SubComponentList.Clear(); // in case there's existing data in there
+            SubComponentList.Capacity = allSubComponents.Length;
 
             foreach (string strSubComponent in allSubComponents)
             {

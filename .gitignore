@@ -8,3 +8,5 @@ project.lock.json
 **/*.suo
 .vs
 .idea
+BenchmarkDotNet.Artifacts
+.DotSettings.user

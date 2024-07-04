@@ -48,10 +48,11 @@ namespace HL7.Dotnetcore
 
             if (this.HasRepetitions)
             {
-                _RepetitionList = new List<Field>();
-                List<string> individualFields = MessageHelper.SplitString(_value, this.Encoding.RepeatDelimiter);
+                var individualFields = _value.Split(this.Encoding.RepeatDelimiter);
+                _RepetitionList = new List<Field>(individualFields.Length);
+                
 
-                for (int index = 0; index < individualFields.Count; index++)
+                for (int index = 0; index < individualFields.Length; index++)
                 {
                     Field field = new Field(individualFields[index], this.Encoding);
                     _RepetitionList.Add(field);
@@ -59,9 +60,9 @@ namespace HL7.Dotnetcore
             }
             else
             {
-                List<string> allComponents = MessageHelper.SplitString(_value, this.Encoding.ComponentDelimiter);
+                var allComponents = _value.Split(this.Encoding.ComponentDelimiter);
 
-                this.ComponentList = new ComponentCollection(allComponents.Count);
+                this.ComponentList = new ComponentCollection(allComponents.Length);
 
                 foreach (string strComponent in allComponents)
                 {

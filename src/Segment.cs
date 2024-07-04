@@ -25,16 +25,14 @@ namespace HL7.Dotnetcore
 
         protected override void ProcessValue()
         {
-            List<string> allFields = MessageHelper.SplitString(_value, this.Encoding.FieldDelimiter);
-
-            allFields.RemoveAt(0);
+            var allFields = _value.Split(this.Encoding.FieldDelimiter);
             
-            for (int i = 0; i < allFields.Count; i++)
+            for (int i = 1; i < allFields.Length; i++)
             {
                 string strField = allFields[i];
                 Field field = new Field(this.Encoding);   
 
-                if (Name == "MSH" && i == 0)
+                if (Name == "MSH" && i == 1)
                     field.IsDelimitersField = true; // special case
 
                 field.Value = strField;

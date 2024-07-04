@@ -19,6 +19,9 @@ namespace HL7.Dotnetcore
         public int SegmentCount { get; set; }
         public HL7Encoding Encoding { get; set; } = new HL7Encoding();
 
+        // we only need a char, but netstandard String.Split take a params array, so pay the alloc cost once here instead of per-split
+        private static readonly char[] _queryDelimiter = { '.' }; 
+
         private const string segmentRegex = @"^([A-Z][A-Z][A-Z1-9])([\(\[]([0-9]+)[\)\]]){0,1}$";
         private const string fieldRegex = @"^([0-9]+)([\(\[]([0-9]+)[\)\]]){0,1}$";
         private const string otherRegEx = @"^[1-9]([0-9]{1,2})?$";
@@ -39,8 +42,8 @@ namespace HL7.Dotnetcore
 
             if (obj is string)
             {
-                var arr1 = MessageHelper.SplitString(this.HL7Message, this.Encoding.SegmentDelimiter, StringSplitOptions.RemoveEmptyEntries);
-                var arr2 = MessageHelper.SplitString(obj as string, this.Encoding.SegmentDelimiter, StringSplitOptions.RemoveEmptyEntries);
+                var arr1 = this.HL7Message.Split(this.Encoding.SegmentDelimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var arr2 = (obj as string).Split(this.Encoding.SegmentDelimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
                 return arr1.SequenceEqual(arr2);
             }
@@ -105,7 +108,7 @@ namespace HL7.Dotnetcore
 
                     this.SegmentCount = segSeqNo;
 
-                    string strSerializedMessage = string.Empty;
+                    string strSerializedMessage;
 
                     try
                     {
@@ -210,7 +213,7 @@ namespace HL7.Dotnetcore
         }
 
         /// <summary>
-        /// Get the Value of specific Field/Component/SubCpomponent, throws error if field/component index is not valid
+        /// Get the Value of specific Field/Component/SubComponent, throws error if field/component index is not valid
         /// </summary>
         /// <param name="strValueFormat">Field/Component position in format SEGMENTNAME.FieldIndex.ComponentIndex.SubComponentIndex example PID.5.2</param>
         /// <returns>Value of specified field/component/subcomponent</returns>
@@ -222,8 +225,8 @@ namespace HL7.Dotnetcore
             int subComponentIndex = 0;
             string strValue = string.Empty;
             
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
-            int comCount = allComponents.Count;
+            var allComponents = strValueFormat.Split(_queryDelimiter);
+            int comCount = allComponents.Length;
             bool isValid = validateValueFormat(allComponents);
 
             if (isValid)
@@ -323,8 +326,8 @@ namespace HL7.Dotnetcore
             string segmentName = string.Empty;
             int componentIndex = 0;
             int subComponentIndex = 0;
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
-            int comCount = allComponents.Count;
+            var allComponents = strValueFormat.Split(_queryDelimiter);
+            int comCount = allComponents.Length;
             bool isValid = validateValueFormat(allComponents);
 
             if (isValid)
@@ -404,8 +407,8 @@ namespace HL7.Dotnetcore
         {
             bool isComponentized = false;
             string segmentName = string.Empty;
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
-            int comCount = allComponents.Count;
+            var allComponents = strValueFormat.Split(_queryDelimiter);
+            int comCount = allComponents.Length;
             bool isValid = validateValueFormat(allComponents);
 
             if (isValid)
@@ -435,7 +438,6 @@ namespace HL7.Dotnetcore
             return isComponentized;
         }
 
-        private static char[] _queryDelim = { '.' };
         /// <summary>
         /// Checks if specified fields has repetitions
         /// </summary>
@@ -443,8 +445,8 @@ namespace HL7.Dotnetcore
         /// <returns>boolean</returns>
         public bool HasRepetitions(string strValueFormat)
         {
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
-            int comCount = allComponents.Count;
+            var allComponents = strValueFormat.Split(_queryDelimiter);
+            int comCount = allComponents.Length;
             bool isValid = validateValueFormat(allComponents);
 
             if (isValid)
@@ -481,8 +483,8 @@ namespace HL7.Dotnetcore
             bool isSubComponentized = false;
             string segmentName = string.Empty;
             int componentIndex = 0;
-            List<string> allComponents = MessageHelper.SplitString(strValueFormat, _queryDelim);
-            int comCount = allComponents.Count;
+            var allComponents = strValueFormat.Split(_queryDelimiter);
+            int comCount = allComponents.Length;
             bool isValid = validateValueFormat(allComponents);
 
             if (isValid)
@@ -768,11 +770,12 @@ namespace HL7.Dotnetcore
                         throw new HL7Exception("MSH segment not found at the beginning of the message", HL7Exception.BAD_MESSAGE);
 
                     this.Encoding.EvaluateSegmentDelimiter(this.HL7Message);
-                    this.HL7Message = string.Join(this.Encoding.SegmentDelimiter, MessageHelper.SplitMessage(this.HL7Message)) + this.Encoding.SegmentDelimiter;
+                    this.allSegments = MessageHelper.SplitMessage(HL7Message);
+                    
+                    this.HL7Message = string.Join(this.Encoding.SegmentDelimiter, allSegments) + this.Encoding.SegmentDelimiter;
 
                     // Check Segment Name & 4th character of each segment
                     char fourthCharMSH = HL7Message[3];
-                    this.allSegments = MessageHelper.SplitMessage(HL7Message);
 
                     foreach (string strSegment in this.allSegments)
                     {
@@ -799,10 +802,10 @@ namespace HL7.Dotnetcore
                         throw new HL7Exception("MSH segment doesn't contain all the required fields", HL7Exception.BAD_MESSAGE);
 
                     // Find Message Version
-                    var MSHFields = MessageHelper.SplitString(this.allSegments[0], Encoding.FieldDelimiter);
+                    var MSHFields = this.allSegments[0].Split(Encoding.FieldDelimiter);
 
-                    if (MSHFields.Count >= 12)
-                        this.Version = MessageHelper.SplitString(this.Encoding.Decode(MSHFields[11]), Encoding.ComponentDelimiter)[0];
+                    if (MSHFields.Length >= 12)
+                        this.Version = this.Encoding.Decode(MSHFields[11]).Split(Encoding.ComponentDelimiter)[0];
                     else
                         throw new HL7Exception("HL7 version not found in the MSH segment", HL7Exception.REQUIRED_FIELD_MISSING);
 
@@ -813,13 +816,13 @@ namespace HL7.Dotnetcore
 
                         if (!string.IsNullOrEmpty(MSH_9))
                         {
-                            var MSH_9_comps = MessageHelper.SplitString(MSH_9, this.Encoding.ComponentDelimiter);
+                            var MSH_9_comps = MSH_9.Split(this.Encoding.ComponentDelimiter);
 
-                            if (MSH_9_comps.Count >= 3)
+                            if (MSH_9_comps.Length >= 3)
                                 this.MessageStructure = MSH_9_comps[2];
-                            else if (MSH_9_comps.Count > 0 && MSH_9_comps[0] != null && MSH_9_comps[0].Equals("ACK"))
+                            else if (MSH_9_comps.Length > 0 && MSH_9_comps[0] != null && MSH_9_comps[0].Equals("ACK"))
                                 this.MessageStructure = "ACK";
-                            else if (MSH_9_comps.Count == 2)
+                            else if (MSH_9_comps.Length == 2)
                                 this.MessageStructure = MSH_9_comps[0] + "_" + MSH_9_comps[1];
                             else
                                 throw new HL7Exception("Message Type & Trigger Event value not found in message", HL7Exception.UNSUPPORTED_MESSAGE_TYPE);
@@ -919,15 +922,15 @@ namespace HL7.Dotnetcore
         /// Validates the components of a value's position descriptor
         /// </summary>
         /// <returns>A boolean indicating whether all the components are valid or not</returns>
-        private bool validateValueFormat(List<string> allComponents)
+        private bool validateValueFormat(string[] allComponents)
         {
             bool isValid = false;
 
-            if (allComponents.Count > 0)
+            if (allComponents.Length > 0)
             {
                 if (Regex.IsMatch(allComponents[0], segmentRegex))
                 {
-                    for (int i = 1; i < allComponents.Count; i++)
+                    for (int i = 1; i < allComponents.Length; i++)
                     {
                         if (i == 1 && Regex.IsMatch(allComponents[i], fieldRegex))
                             isValid = true;
