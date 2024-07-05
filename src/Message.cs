@@ -19,7 +19,6 @@ namespace HL7.Dotnetcore
         public int SegmentCount { get; set; }
         public HL7Encoding Encoding { get; set; } = new HL7Encoding();
 
-        // we only need a char, but netstandard String.Split take a params array, so pay the alloc cost once here instead of per-split
         private static readonly char[] _queryDelimiter = { '.' }; 
 
         private const string segmentRegex = @"^([A-Z][A-Z][A-Z1-9])([\(\[]([0-9]+)[\)\]]){0,1}$";
@@ -190,7 +189,9 @@ namespace HL7.Dotnetcore
                                 }
                             }
                             else
+                            {
                                 serializeField(field, strMessage);
+                            }
                         }
                         
                         strMessage.Append(Encoding.SegmentDelimiter);
@@ -390,10 +391,14 @@ namespace HL7.Dotnetcore
 
                 }
                 else
+                {
                     throw new HL7Exception("Segment name not available");
+                }
             }
             else
+            {
                 throw new HL7Exception("Request format is not valid");
+            }
 
             return isSet;
         }
@@ -430,10 +435,14 @@ namespace HL7.Dotnetcore
                     }
                 }
                 else
+                {
                     throw new HL7Exception("Field not identified in request");
+                }
             }
             else
+            {
                 throw new HL7Exception("Request format is not valid");
+            }
 
             return isComponentized;
         }
@@ -467,10 +476,14 @@ namespace HL7.Dotnetcore
                     }
                 }
                 else
+                {
                     throw new HL7Exception("Field not identified in request");
+                }
             }
             else
+            {
                 throw new HL7Exception("Request format is not valid");
+            }
         }
 
         /// <summary>
@@ -507,10 +520,14 @@ namespace HL7.Dotnetcore
                     }
                 }
                 else
+                {
                     throw new HL7Exception("Component not identified in request");
+                }
             }
             else
+            {
                 throw new HL7Exception("Request format is not valid");
+            }
 
             return isSubComponentized;
         }
@@ -896,7 +913,9 @@ namespace HL7.Dotnetcore
                 }
             }
             else
+            {
                 strMessage.Append(Encoding.Encode(field.Value));
+            }
         }
 
         /// <summary> 
