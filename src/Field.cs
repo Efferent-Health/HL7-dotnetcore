@@ -51,7 +51,6 @@ namespace HL7.Dotnetcore
                 var individualFields = _value.Split(this.Encoding.RepeatDelimiter);
                 _RepetitionList = new List<Field>(individualFields.Length);
                 
-
                 for (int index = 0; index < individualFields.Length; index++)
                 {
                     Field field = new Field(individualFields[index], this.Encoding);
@@ -168,6 +167,7 @@ namespace HL7.Dotnetcore
                 throw new HL7Exception("Error removing trailing components - " + ex.Message, ex);
             }
         }
+        
         public void AddRepeatingField(Field field) 
         {
             if (!this.HasRepetitions) 
