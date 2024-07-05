@@ -43,7 +43,9 @@ namespace HL7.Dotnetcore
             var list = new List<string>();
 
             foreach (Match m in matches)
+            {
                 list.Add(m.Groups[1].Value);
+            }
 
             return list.ToArray();
         }
