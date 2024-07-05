@@ -1,18 +1,14 @@
 # HL7-dotnetcore
 
-[![NuGet](https://img.shields.io/nuget/v/HL7-dotnetcore.svg)](https://www.nuget.org/packages/HL7-dotnetcore/)
-![downloads](https://img.shields.io/nuget/dt/HL7-dotnetcore)
-![github](https://img.shields.io/github/stars/Efferent-Health/HL7-dotnetcore?style=flat&color=yellow)
-![build](https://github.com/Efferent-Health/HL7-dotnetcore/actions/workflows/main.yml/badge.svg?branch=master)
+## &#9888;&#65039; Important message
 
-This is a lightweight library for building and parsing HL7 2.x messages, for .NET Standard, .NET Core, and .NET 5+. It is not tied to any particular version of HL7 nor validates against one. 
+**THIS PROJECT IS SOON TO BE DEPRECATED. PLEASE PREFER TO USE OUR NEW PROJECT:** https://github.com/Efferent-Health/HL7-V2
+
+Read our [Deprecation Notice](https://github.com/Efferent-Health/HL7-dotnetcore/issues/127).
 
 ## Usage and compatibility
 
-This library is distributed via [nuget](https://www.nuget.org/packages/HL7-dotnetcore/latest) and targets two framworks:
-- .NET Standard 2.0 for maximum compability, covering more than 40 .NET frameworks
-- .NET 8.0 for better performance under the new Microsoft's cross-platform framework
-
+This library is distributed via [nuget](https://www.nuget.org/packages/HL7-dotnetcore/latest).
 For using the classes and methods mentioned below, declare de following namespace:
 
 ````cs
