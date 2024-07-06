@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hl7-dotnetcore", "src\HL7-dotnetcore.csproj", "{8D0228F0-7BE1-4D45-9EB4-8E170F76A17E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hl7-V2", "src\HL7-V2.csproj", "{8D0228F0-7BE1-4D45-9EB4-8E170F76A17E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hl7test", "test\HL7test.csproj", "{910F6F49-6AD7-45EF-8FA0-E141C77D81DA}"
 EndProject
