@@ -1,5 +1,3 @@
-# HL7-dotnetcore
-
 ## &#9888;&#65039; Important message
 
 **THIS HAS BEEN ARCHIVED. PLEASE PREFER TO USE OUR NEW IMPROVED PROJECT:** https://github.com/Efferent-Health/HL7-V2
